@@ -101,7 +101,7 @@ let db
     const [rows] = await db.execute('SELECT COUNT(*) AS count FROM Users')
     if (rows[0].count === 0) {
       await db.execute(`
-        INSERT INTO users (username, email, password_hash, role)
+        INSERT INTO Users (username, email, password_hash, role)
         VALUES ('alice123', 'alice@example.com', 'hashed123', 'owner'),
             ('bobwalker', 'bob@example.com', 'hashed456', 'walker'),
             ('carol123', 'carol@example.com', 'hashed789', 'owner'),
@@ -110,56 +110,56 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO dogs (owner_id, NAME, size)
+        INSERT INTO Dogs (owner_id, NAME, size)
         VALUES ((SELECT user_id FROM Users WHERE username = 'alice123'), 'Max', 'medium'),
-            ((SELECT user_id FROM users WHERE username = 'carol123'), 'Bella', 'small'),
-            ((SELECT user_id FROM users WHERE username = 'jim123'), 'Lily', 'large'),
-            ((SELECT user_id FROM users WHERE username = 'alice123'), 'Sam', 'small'),
-            ((SELECT user_id FROM users WHERE username = 'alice123'), 'Joe', 'large')
+            ((SELECT user_id FROM Users WHERE username = 'carol123'), 'Bella', 'small'),
+            ((SELECT user_id FROM Users WHERE username = 'jim123'), 'Lily', 'large'),
+            ((SELECT user_id FROM Users WHERE username = 'alice123'), 'Sam', 'small'),
+            ((SELECT user_id FROM Users WHERE username = 'alice123'), 'Joe', 'large')
       `)
 
       await db.execute(`
-        INSERT INTO walkrequests (dog_id, requested_time, duration_minutes, location, STATUS)
-        VALUES ((SELECT dog_id FROM dogs WHERE name = 'Max'), '2025-06-10 08:00:00', '30', 'Parklands', 'open'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', '45', 'Beachside Ave', 'open'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Lily'), '2025-06-10 11:00:00', '30', 'Parklands', 'open'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Sam'), '2025-06-10 13:00:00', '30', 'Parklands', 'completed'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Joe'), '2025-06-10 14:00:00', '30', 'Parklands', 'completed'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Lily'), '2025-06-11 14:00:00', '30', 'Parklands', 'cancelled'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Max'), '2025-06-16 14:00:00', '20', 'Parklands', 'accepted'),
-            ((SELECT dog_id FROM dogs WHERE name = 'Bella'), '2025-06-13 14:00:00', '40', 'Beachside Ave', 'completed')
+        INSERT INTO Walkrequests (dog_id, requested_time, duration_minutes, location, STATUS)
+        VALUES ((SELECT dog_id FROM Dogs WHERE name = 'Max'), '2025-06-10 08:00:00', '30', 'Parklands', 'open'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', '45', 'Beachside Ave', 'open'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Lily'), '2025-06-10 11:00:00', '30', 'Parklands', 'open'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Sam'), '2025-06-10 13:00:00', '30', 'Parklands', 'completed'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Joe'), '2025-06-10 14:00:00', '30', 'Parklands', 'completed'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Lily'), '2025-06-11 14:00:00', '30', 'Parklands', 'cancelled'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Max'), '2025-06-16 14:00:00', '20', 'Parklands', 'accepted'),
+            ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-13 14:00:00', '40', 'Beachside Ave', 'completed')
       `)
 
       await db.execute(`
-        INSERT INTO walkapplications (request_id, walker_id, applied_at, STATUS)
-        VALUES ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
-          ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
-          ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
-          ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-16 14:00:00'), (SELECT user_id FROM users WHERE username = 'andywalker'), '2025-06-15 14:00:00', 'accepted'),
-          ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-13 14:00:00'), (SELECT user_id FROM users WHERE username = 'andywalker'), '2025-06-10 14:00:00', 'accepted')
+        INSERT INTO Walkapplications (request_id, walker_id, applied_at, STATUS)
+        VALUES ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
+          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
+          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
+          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-16 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-15 14:00:00', 'accepted'),
+          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-13 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-10 14:00:00', 'accepted')
       `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 5, 'Too great!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-09 10:00:00'
+        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
+        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 5, 'Too great!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 10:00:00'
 
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 4.5, 'Perfect!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-09 14:00:00'
+        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
+        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 4.5, 'Perfect!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 14:00:00'
 
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 1, 'Too bad!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-12 14:00:00'
+        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
+        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 1, 'Too bad!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-12 14:00:00'
 
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 5, 'Too great!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-15 14:00:00'
+        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
+        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 5, 'Too great!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-15 14:00:00'
 
         `)
     }
@@ -171,45 +171,45 @@ let db
   }
 })()
 
-app.get('/api/dogs', async (req, res) => {
+app.get('/api/Dogs', async (req, res) => {
   try {
     const [items] = await db.execute(
-      'SELECT dogs.name as dog_name, size, users.username as owner_username FROM dogs left join users on dogs.owner_id = users.user_id'
+      'SELECT Dogs.name as dog_name, size, Users.username as owner_username FROM Dogs left join Users on Dogs.owner_id = Users.user_id'
     )
 
     res.json(items)
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch dogs' })
+    res.status(500).json({ error: 'Failed to fetch Dogs' })
   }
 })
 
 // My conditions are:
-// walkrequests.status = "open"
-app.get('/api/walkrequests/open', async (req, res) => {
+// Walkrequests.status = "open"
+app.get('/api/Walkrequests/open', async (req, res) => {
   try {
     const [items] = await db.execute(
-      'SELECT walkrequests.request_id, dogs.name as dog_name, requested_time, duration_minutes, location, users.username as owner_username FROM walkrequests left join dogs on dogs.dog_id = walkrequests.dog_id left join users on dogs.owner_id = users.user_id WHERE walkrequests.status = "open"'
+      'SELECT Walkrequests.request_id, Dogs.name as dog_name, requested_time, duration_minutes, location, Users.username as owner_username FROM Walkrequests left join Dogs on Dogs.dog_id = Walkrequests.dog_id left join Users on Dogs.owner_id = Users.user_id WHERE Walkrequests.status = "open"'
     )
 
     res.json(items)
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch dogs' })
+    res.status(500).json({ error: 'Failed to fetch Dogs' })
   }
 })
 
 // My conditions are:
 // walker_id is not NULL
-// walkapplications.STATUS = "accepted"
-// walkrequests.STATUS = "completed"
+// Walkapplications.STATUS = "accepted"
+// Walkrequests.STATUS = "completed"
 app.get('/api/walkers/summary', async (req, res) => {
   try {
     const [items] = await db.execute(
-      'SELECT username AS walker_username, total_ratings, average_rating, completed_walks FROM users LEFT JOIN (SELECT walker_id, COUNT(1) AS completed_walks FROM walkrequests LEFT JOIN walkapplications ON walkrequests.request_id = walkapplications.request_id WHERE walkrequests.STATUS = "completed" AND walkapplications.walker_id IS NOT NULL AND walkapplications.STATUS = "accepted" GROUP BY walker_id) AS r ON r.walker_id = users.user_id LEFT JOIN (SELECT walker_id, COUNT(1) as total_ratings, AVG(rating) as average_rating FROM `walkratings` WHERE walker_id is not NULL GROUP BY walker_id) AS w ON w.walker_id = users.user_id WHERE users.role = "walker"'
+      'SELECT username AS walker_username, total_ratings, average_rating, completed_walks FROM Users LEFT JOIN (SELECT walker_id, COUNT(1) AS completed_walks FROM Walkrequests LEFT JOIN Walkapplications ON Walkrequests.request_id = Walkapplications.request_id WHERE Walkrequests.STATUS = "completed" AND Walkapplications.walker_id IS NOT NULL AND Walkapplications.STATUS = "accepted" GROUP BY walker_id) AS r ON r.walker_id = Users.user_id LEFT JOIN (SELECT walker_id, COUNT(1) as total_ratings, AVG(rating) as average_rating FROM `Walkratings` WHERE walker_id is not NULL GROUP BY walker_id) AS w ON w.walker_id = Users.user_id WHERE Users.role = "walker"'
     )
 
     res.json(items)
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch dogs' })
+    res.status(500).json({ error: 'Failed to fetch Dogs' })
   }
 })
 
