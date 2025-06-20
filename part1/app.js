@@ -132,7 +132,7 @@ let db
 
       await db.execute(`
         INSERT INTO WalkApplications (request_id, walker_id, applied_at, STATUS)
-        VALUES ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
+        VALUES ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
           ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
           ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
           ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-16 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-15 14:00:00', 'accepted'),
@@ -171,7 +171,7 @@ let db
   }
 })()
 
-app.get('/api/Dogs', async (req, res) => {
+app.get('/api/dogs', async (req, res) => {
   try {
     const [items] = await db.execute(
       'SELECT Dogs.name as dog_name, size, Users.username as owner_username FROM Dogs left join Users on Dogs.owner_id = Users.user_id'
@@ -184,11 +184,11 @@ app.get('/api/Dogs', async (req, res) => {
 })
 
 // My conditions are:
-// Walkrequests.status = "open"
-app.get('/api/Walkrequests/open', async (req, res) => {
+// WalkRequests.status = "open"
+app.get('/api/walkrequests/open', async (req, res) => {
   try {
     const [items] = await db.execute(
-      'SELECT Walkrequests.request_id, Dogs.name as dog_name, requested_time, duration_minutes, location, Users.username as owner_username FROM Walkrequests left join Dogs on Dogs.dog_id = Walkrequests.dog_id left join Users on Dogs.owner_id = Users.user_id WHERE Walkrequests.status = "open"'
+      'SELECT WalkRequests.request_id, Dogs.name as dog_name, requested_time, duration_minutes, location, Users.username as owner_username FROM WalkRequests left join Dogs on Dogs.dog_id = WalkRequests.dog_id left join Users on Dogs.owner_id = Users.user_id WHERE WalkRequests.status = "open"'
     )
 
     res.json(items)
@@ -199,12 +199,12 @@ app.get('/api/Walkrequests/open', async (req, res) => {
 
 // My conditions are:
 // walker_id is not NULL
-// Walkapplications.STATUS = "accepted"
-// Walkrequests.STATUS = "completed"
+// WalkApplications.STATUS = "accepted"
+// WalkRequests.STATUS = "completed"
 app.get('/api/walkers/summary', async (req, res) => {
   try {
     const [items] = await db.execute(
-      'SELECT username AS walker_username, total_ratings, average_rating, completed_walks FROM Users LEFT JOIN (SELECT walker_id, COUNT(1) AS completed_walks FROM Walkrequests LEFT JOIN Walkapplications ON Walkrequests.request_id = Walkapplications.request_id WHERE Walkrequests.STATUS = "completed" AND Walkapplications.walker_id IS NOT NULL AND Walkapplications.STATUS = "accepted" GROUP BY walker_id) AS r ON r.walker_id = Users.user_id LEFT JOIN (SELECT walker_id, COUNT(1) as total_ratings, AVG(rating) as average_rating FROM `Walkratings` WHERE walker_id is not NULL GROUP BY walker_id) AS w ON w.walker_id = Users.user_id WHERE Users.role = "walker"'
+      'SELECT username AS walker_username, total_ratings, average_rating, completed_walks FROM Users LEFT JOIN (SELECT walker_id, COUNT(1) AS completed_walks FROM WalkRequests LEFT JOIN WalkApplications ON WalkRequests.request_id = WalkApplications.request_id WHERE WalkRequests.STATUS = "completed" AND WalkApplications.walker_id IS NOT NULL AND WalkApplications.STATUS = "accepted" GROUP BY walker_id) AS r ON r.walker_id = Users.user_id LEFT JOIN (SELECT walker_id, COUNT(1) as total_ratings, AVG(rating) as average_rating FROM `WalkRatings` WHERE walker_id is not NULL GROUP BY walker_id) AS w ON w.walker_id = Users.user_id WHERE Users.role = "walker"'
     )
 
     res.json(items)
