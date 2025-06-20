@@ -1,6 +1,24 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../models/db');
+const express = require('express')
+const router = express.Router()
+const db = require('../models/db')
+
+// Get all dogs info of current login user
+router.get('/dogs', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM Dogs d
+      WHERE d.owner_id = ?
+    `,
+      [req.session.user.user_id]
+    )
+    res.json(rows)
+  } catch (error) {
+    console.error('SQL Error:', error)
+    res.status(500).json({ error: 'Failed to fetch dogs' })
+  }
+})
 
 // GET all walk requests (for walkers to view)
 router.get('/', async (req, res) => {
@@ -11,52 +29,63 @@ router.get('/', async (req, res) => {
       JOIN Dogs d ON wr.dog_id = d.dog_id
       JOIN Users u ON d.owner_id = u.user_id
       WHERE wr.status = 'open'
-    `);
-    res.json(rows);
+    `)
+    res.json(rows)
   } catch (error) {
-    console.error('SQL Error:', error);
-    res.status(500).json({ error: 'Failed to fetch walk requests' });
+    console.error('SQL Error:', error)
+    res.status(500).json({ error: 'Failed to fetch walk requests' })
   }
-});
+})
 
 // POST a new walk request (from owner)
 router.post('/', async (req, res) => {
-  const { dog_id, requested_time, duration_minutes, location } = req.body;
+  const { dog_id, requested_time, duration_minutes, location } = req.body
 
   try {
-    const [result] = await db.query(`
+    const [result] = await db.query(
+      `
       INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location)
       VALUES (?, ?, ?, ?)
-    `, [dog_id, requested_time, duration_minutes, location]);
+    `,
+      [dog_id, requested_time, duration_minutes, location]
+    )
 
-    res.status(201).json({ message: 'Walk request created', request_id: result.insertId });
+    res
+      .status(201)
+      .json({ message: 'Walk request created', request_id: result.insertId })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create walk request' });
+    res.status(500).json({ error: 'Failed to create walk request' })
   }
-});
+})
 
 // POST an application to walk a dog (from walker)
 router.post('/:id/apply', async (req, res) => {
-  const requestId = req.params.id;
-  const { walker_id } = req.body;
+  const requestId = req.params.id
+  const { walker_id } = req.body
 
   try {
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO WalkApplications (request_id, walker_id)
       VALUES (?, ?)
-    `, [requestId, walker_id]);
+    `,
+      [requestId, walker_id]
+    )
 
-    await db.query(`
+    await db.query(
+      `
       UPDATE WalkRequests
       SET status = 'accepted'
       WHERE request_id = ?
-    `, [requestId]);
+    `,
+      [requestId]
+    )
 
-    res.status(201).json({ message: 'Application submitted' });
+    res.status(201).json({ message: 'Application submitted' })
   } catch (error) {
-    console.error('SQL Error:', error);
-    res.status(500).json({ error: 'Failed to apply for walk' });
+    console.error('SQL Error:', error)
+    res.status(500).json({ error: 'Failed to apply for walk' })
   }
-});
+})
 
-module.exports = router;
+module.exports = router
