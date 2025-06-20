@@ -152,8 +152,8 @@ let db
         `)
 
       await db.execute(`
-        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 1, 'Too bad!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-12 14:00:00'
+        INSERT INTO WalkRatings (request_id, walker_id, owner_id, rating, comments)
+        SELECT WalkApplications.request_id, WalkApplications.walker_id, Dogs.owner_id, 1, 'Too bad!' FROM WalkApplications LEFT JOIN WalkRequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-12 14:00:00'
 
         `)
 
