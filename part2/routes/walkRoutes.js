@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models/db')
 
-// Get all dogs info of current login user
+// Get all Dogs info of current login user
 router.get('/dogs', async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -16,7 +16,7 @@ router.get('/dogs', async (req, res) => {
     res.json(rows)
   } catch (error) {
     console.error('SQL Error:', error)
-    res.status(500).json({ error: 'Failed to fetch dogs' })
+    res.status(500).json({ error: 'Failed to fetch Dogs' })
   }
 })
 
