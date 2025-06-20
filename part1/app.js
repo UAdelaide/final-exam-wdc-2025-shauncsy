@@ -98,11 +98,11 @@ let db
     `)
 
     // Insert data if table is empty
-    const [rows] = await db.execute('SELECT COUNT(*) AS count FROM users')
+    const [rows] = await db.execute('SELECT COUNT(*) AS count FROM Users')
     if (rows[0].count === 0) {
       await db.execute(`
-        INSERT INTO users (username, email, password_hash, role) 
-        VALUES ('alice123', 'alice@example.com', 'hashed123', 'owner'), 
+        INSERT INTO users (username, email, password_hash, role)
+        VALUES ('alice123', 'alice@example.com', 'hashed123', 'owner'),
             ('bobwalker', 'bob@example.com', 'hashed456', 'walker'),
             ('carol123', 'carol@example.com', 'hashed789', 'owner'),
             ('andywalker', 'andy@example.com', 'hashed000', 'walker'),
@@ -110,7 +110,7 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO dogs (owner_id, NAME, size) 
+        INSERT INTO dogs (owner_id, NAME, size)
         VALUES ((SELECT user_id FROM users WHERE username = 'alice123'), 'Max', 'medium'),
             ((SELECT user_id FROM users WHERE username = 'carol123'), 'Bella', 'small'),
             ((SELECT user_id FROM users WHERE username = 'jim123'), 'Lily', 'large'),
@@ -119,7 +119,7 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO walkrequests (dog_id, requested_time, duration_minutes, location, STATUS) 
+        INSERT INTO walkrequests (dog_id, requested_time, duration_minutes, location, STATUS)
         VALUES ((SELECT dog_id FROM dogs WHERE name = 'Max'), '2025-06-10 08:00:00', '30', 'Parklands', 'open'),
             ((SELECT dog_id FROM dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', '45', 'Beachside Ave', 'open'),
             ((SELECT dog_id FROM dogs WHERE name = 'Lily'), '2025-06-10 11:00:00', '30', 'Parklands', 'open'),
@@ -131,7 +131,7 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO walkapplications (request_id, walker_id, applied_at, STATUS) 
+        INSERT INTO walkapplications (request_id, walker_id, applied_at, STATUS)
         VALUES ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
           ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
           ((SELECT request_id FROM walkrequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
@@ -140,27 +140,27 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments) 
+        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
         SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 5, 'Too great!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-09 10:00:00'
-        
+
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments) 
+        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
         SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 4.5, 'Perfect!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-09 14:00:00'
-        
+
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments) 
+        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
         SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 1, 'Too bad!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-12 14:00:00'
-        
+
         `)
 
       await db.execute(`
-        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments) 
+        INSERT INTO walkratings (request_id, walker_id, owner_id, rating, comments)
         SELECT walkapplications.request_id, walkapplications.walker_id, dogs.owner_id, 5, 'Too great!' FROM walkapplications LEFT JOIN walkrequests ON walkapplications.request_id = walkrequests.request_id LEFT JOIN dogs ON walkrequests.dog_id = dogs.dog_id WHERE applied_at = '2025-06-15 14:00:00'
-        
+
         `)
     }
   } catch (err) {
