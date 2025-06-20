@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models/db')
 
-// GET all users (for admin/testing)
+// GET all Users (for admin/testing)
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     )
     res.json(rows)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' })
+    res.status(500).json({ error: 'Failed to fetch Users' })
   }
 })
 
