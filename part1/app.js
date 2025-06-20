@@ -111,7 +111,7 @@ let db
 
       await db.execute(`
         INSERT INTO dogs (owner_id, NAME, size)
-        VALUES ((SELECT user_id FROM users WHERE username = 'alice123'), 'Max', 'medium'),
+        VALUES ((SELECT user_id FROM Users WHERE username = 'alice123'), 'Max', 'medium'),
             ((SELECT user_id FROM users WHERE username = 'carol123'), 'Bella', 'small'),
             ((SELECT user_id FROM users WHERE username = 'jim123'), 'Lily', 'large'),
             ((SELECT user_id FROM users WHERE username = 'alice123'), 'Sam', 'small'),
