@@ -119,7 +119,7 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, STATUS)
+        INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, status)
         VALUES ((SELECT dog_id FROM Dogs WHERE name = 'Max'), '2025-06-10 08:00:00', '30', 'Parklands', 'open'),
             ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', '45', 'Beachside Ave', 'open'),
             ((SELECT dog_id FROM Dogs WHERE name = 'Lily'), '2025-06-10 11:00:00', '30', 'Parklands', 'open'),
@@ -131,7 +131,7 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO WalkApplications (request_id, walker_id, applied_at, STATUS)
+        INSERT INTO WalkApplications (request_id, walker_id, applied_at, status)
         VALUES ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
           ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
           ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
