@@ -133,10 +133,10 @@ let db
       await db.execute(`
         INSERT INTO WalkApplications (request_id, walker_id, applied_at, STATUS)
         VALUES ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-10 13:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 10:00:00', 'accepted'),
-          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
-          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
-          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-16 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-15 14:00:00', 'accepted'),
-          ((SELECT request_id FROM Walkrequests WHERE requested_time = '2025-06-13 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-10 14:00:00', 'accepted')
+          ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-10 14:00:00'), (SELECT user_id FROM Users WHERE username = 'bobwalker'), '2025-06-09 14:00:00', 'accepted'),
+          ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-11 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-12 14:00:00', 'rejected'),
+          ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-16 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-15 14:00:00', 'accepted'),
+          ((SELECT request_id FROM WalkRequests WHERE requested_time = '2025-06-13 14:00:00'), (SELECT user_id FROM Users WHERE username = 'andywalker'), '2025-06-10 14:00:00', 'accepted')
       `)
 
       await db.execute(`
