@@ -140,14 +140,14 @@ let db
       `)
 
       await db.execute(`
-        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 5, 'Too great!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 10:00:00'
+        INSERT INTO WalkRatings (request_id, walker_id, owner_id, rating, comments)
+        SELECT WalkApplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 5, 'Too great!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 10:00:00'
 
         `)
 
       await db.execute(`
-        INSERT INTO Walkratings (request_id, walker_id, owner_id, rating, comments)
-        SELECT Walkapplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 4.5, 'Perfect!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 14:00:00'
+        INSERT INTO WalkRatings (request_id, walker_id, owner_id, rating, comments)
+        SELECT WalkApplications.request_id, Walkapplications.walker_id, Dogs.owner_id, 4.5, 'Perfect!' FROM Walkapplications LEFT JOIN Walkrequests ON Walkapplications.request_id = Walkrequests.request_id LEFT JOIN Dogs ON Walkrequests.dog_id = Dogs.dog_id WHERE applied_at = '2025-06-09 14:00:00'
 
         `)
 
