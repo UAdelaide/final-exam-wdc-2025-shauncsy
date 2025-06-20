@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Express</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <div id="app">
+        <img :src="image" alt="" style="max-width: 400px; margin-top: 20px;">
+        <button @click="toggleShow">Show Info</button>
+        <p v-if="showInfo">{{ name }}</p>
+        <p v-if="showInfo">{{ size }}</p>
+        <p v-if="showInfo">{{ age }}</p>
+        <p v-if="showInfo">{{ height }}</p>
+    </div>
+
+<script>
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const image = ref('')
+      const name = ref('Buddy')
+      const size = ref('medium')
+      const age = ref(3)
+      const height = ref(2)
+      const showInfo = ref(false)
+
+      const toggleShow = () => {
+        showInfo.value = !showInfo.value
+      }
+
+      // fetch picture of dog
+      fetch('https://dog.ceo/api/breeds/image/random')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            image.value = data.message
+          }
+        })
+
+      return { image, name, size, age, height, toggleShow, showInfo }
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>
