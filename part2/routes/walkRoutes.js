@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 // GET all walk requests created by current owner (for owner dashboard)
 router.get('/owner', async (req, res) => {
   try {
-    const ownerId = req.session.user.user_id;  // 获取当前 owner 的 ID
+    const ownerId = req.session.user.user_id;
     const [rows] = await db.query(
       `
       SELECT wr.*, d.name AS dog_name, d.size
