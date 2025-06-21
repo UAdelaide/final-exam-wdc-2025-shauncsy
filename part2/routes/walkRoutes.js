@@ -37,6 +37,29 @@ router.get('/', async (req, res) => {
   }
 })
 
+
+// GET all walk requests created by current owner (for owner dashboard)
+router.get('/owner', async (req, res) => {
+  try {
+    const ownerId = req.session.user.user_id;  // 获取当前 owner 的 ID
+    const [rows] = await db.query(
+      `
+      SELECT wr.*, d.name AS dog_name, d.size
+      FROM WalkRequests wr
+      JOIN Dogs d ON wr.dog_id = d.dog_id
+      WHERE d.owner_id = ?
+      ORDER BY wr.requested_time DESC
+      `,
+      [ownerId]
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error('SQL Error:', error);
+    res.status(500).json({ error: 'Failed to fetch owner walk requests' });
+  }
+});
+
+
 // POST a new walk request (from owner)
 router.post('/', async (req, res) => {
   const { dog_id, requested_time, duration_minutes, location } = req.body
